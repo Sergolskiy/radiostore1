@@ -30,7 +30,7 @@
     "@swimlane/ngx-charts": "7.0.1",
     "@swimlane/ngx-datatable": "11.1.5",
     "@types/chart.js": "2.7.40",
-    "angular": "1.7.0",
+    "angular": "1.7.9",
     "angular-bootstrap-md": "5.1.2",
     "angular2-text-mask": "9.0.0",
     "angular5-csv": "0.2.10",
