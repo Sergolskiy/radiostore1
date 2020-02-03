@@ -1,0 +1,162 @@
+.example-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+::ng-deep #cdk-overlay-1 .mat-menu-panel{
+
+  max-width: 400px!important;
+  height: 445px;
+
+}
+
+mat-cell:first-child, mat-footer-cell:first-child, mat-header-cell:first-child{
+  flex: .3;
+}
+
+.mat-column-category{
+  flex: 1.1 !important;
+}
+
+.menu__for_dima{
+
+  width: 400px;
+  height: 90px;
+
+  .one_fix {
+    display: none;
+    visibility: hidden;
+  }
+  label {
+    display: block;
+    padding: 0.5em;
+    text-align: center;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 40px;
+    margin-bottom: 0;
+    padding-top: 9px;
+  }
+  label:hover {
+    color: #000;
+  }
+  label::before {
+    font-family: Consolas, monaco, monospace;
+    font-weight: bold;
+    font-size: 15px;
+    content: "+";
+    vertical-align: text-top;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 3px;
+    background: radial-gradient(ellipse at center, #CCC 50%, transparent 50%);
+  }
+  .expand {
+    height: 0px;
+    overflow: hidden;
+    transition: height 0.5s;
+    color: #000;
+  }
+  section {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .one_fix:checked ~ .expand {
+    height: auto;
+  }
+  .one_fix:checked ~ label::before {
+    content: "-";
+  }
+
+}
+
+
+.tags__main{
+  display: flex;
+  align-items: center;
+
+  .tags__main__1{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c7d6f1;
+    padding: 20px;
+    position: relative;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    border-radius: 2px;
+
+    margin-bottom: 10px;
+
+    span{
+      font-size: 14px;
+    }
+
+    i{
+      cursor: pointer;
+      font-size: 14px;
+      padding-top: 1px;
+      padding-left: 2px;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      &:hover{
+
+        color: #cc0000;
+        transition: 0.3s all;
+
+      }
+    }
+
+  }
+
+}
+
+
+.ul__1{
+
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin-bottom: 0;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  overflow-x: hidden;
+
+
+  .span__1234{
+
+    //display: flex;
+    //margin-top: 15px;
+    //margin-bottom: 20px;
+
+    .span__12345{
+
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      width: 100%;
+    }
+
+  }
+
+}
+
+.input__99{
+
+  position: absolute;
+  top: 14px;
+  left: 14px;
+
+}

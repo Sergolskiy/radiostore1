@@ -1,0 +1,237 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Товары</mat-card-title>
+    <button mat-raised-button color="link" (click)="toCreate()">Создать</button>
+    <form #searchForm="ngForm" (ngSubmit)="search(searchForm)" style="display: inline-flex;
+    align-items: center;
+    float: right;">
+
+      <mat-form-field style="margin-right: 1rem;">
+        <input matInput type="text" placeholder="Поиск по артикулу"  name="article"  [ngModel]="article">
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary">Искать</button>
+    </form>
+
+    <!--filter menu-->
+
+    <br>
+
+
+    <button mat-raised-button [matMenuTriggerFor]="menu" style="margin-top: 0.5rem;margin-bottom: 0.5rem">Отфильтруйте продукты</button>
+
+    <br>
+
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="category">Категории</button>
+      <button mat-menu-item [matMenuTriggerFor]="discount">Скидки</button>
+      <button mat-menu-item [matMenuTriggerFor]="price">Цена</button>
+      <button mat-menu-item [matMenuTriggerFor]="quantity">Наличие</button>
+    </mat-menu>
+
+    <mat-menu #category="matMenu" style="width:100%">
+      <div (click)="onClick1($event)" class="menu__for_dima">
+        <form>
+        <ul class="ul__1">
+          <span *ngFor="let category of categories " class="span__1234">
+            <span *ngIf="category.sub_categories.length; else WithoutSubCategory" class="span__12345">
+
+
+              <input type="checkbox" class="input__99" name="category_{{category.id}}" (click)="checkCategoryOnChecked($event, category)"/>
+
+              <input id="{{ category.id }}" class="one_fix" type="checkbox">
+              <label for="{{ category.id }}" >{{ category.title }}</label>
+
+
+              <div id="{{ category.title }}" class="expand">
+
+
+                <section>
+
+
+                  <span *ngFor="let sub_category of category.sub_categories " style="margin-top: 15px;margin-bottom: 15px;">
+
+                      <span *ngIf="sub_category.sub_categories.length; else WithoutSubSubCategory"  class="span__12345">
+
+
+                        <input type="checkbox"  class="input__99" name="category_{{sub_category.id}}" (click)="checkCategoryOnChecked($event, sub_category)" />
+                        <input id="{{ sub_category.id }}" class="one_fix" type="checkbox">
+                        <label for="{{ sub_category.id }}">{{ sub_category.title }}</label>
+
+                        <div id="{{ sub_category.title }}" class="expand">
+
+                          <section>
+
+                            <span *ngFor="let sub_sub_category of sub_category.sub_categories " style="display: flex;align-items: center;justify-content: space-between;">
+                              <input type="checkbox" name="category_{{sub_sub_category.id}}" (click)="checkCategoryOnChecked($event, sub_sub_category)" />
+                              <p style="display: flex;justify-content: flex-end;text-align: center;">{{ sub_sub_category.title }}</p>
+                            </span>
+
+                          </section>
+
+                        </div>
+
+                      </span>
+
+                      <ng-template #WithoutSubSubCategory>
+
+                        <div class="top__124" style="display: flex;align-items: center;justify-content: space-between;">
+
+                          <input type="checkbox" name="category_{{sub_category.id}}" style="margin-left: 15px;margin-right: 15px;" (click)="checkCategoryOnChecked($event, sub_category)"/>
+
+                          <span class="" style="text-align: right;">{{ sub_category.title }}</span>
+
+                        </div>
+
+                      </ng-template>
+
+                  </span>
+
+
+                </section>
+
+
+              </div>
+            </span>
+
+
+            <ng-template #WithoutSubCategory>
+              <input type="checkbox" name="category_{{category.id}}" (click)="checkCategoryOnChecked($event, category)" />
+              {{ category.title }}
+            </ng-template>
+
+
+          </span>
+        </ul>
+        <button (click)="sendFilter('category')">Применить</button>
+        </form>
+      </div>
+    </mat-menu>
+
+    <mat-menu #discount="matMenu">
+      <button mat-menu-item (click)="sendFilter('discount','discount', 'Со скидкой')">Со скидкой</button>
+      <button mat-menu-item (click)="sendFilter('discount', 'without_discount', 'Без скидки')">Без скидки</button>
+      <button mat-menu-item (click)="sendFilter('discount', 'disabled', 'Скидка закончилась')">Скидка закончилась</button>
+      <button mat-menu-item (click)="sendFilter('discount', 'planned', 'Заплонированные скидки')">Заплонированные скидки</button>
+    </mat-menu>
+
+    <mat-menu #price="matMenu">
+      <button mat-menu-item (click)="sendFilter('price','with_price', 'С ценой')">С ценой</button>
+      <button mat-menu-item (click)="sendFilter('price', 'without_price', 'Без цены')">Без цены</button>
+      <button mat-menu-item (click)="sendFilter('price', 'under_priced', 'С заниженной ценой')">С заниженной ценой</button>
+    </mat-menu>
+
+    <mat-menu #quantity="matMenu">
+      <button mat-menu-item (click)="sendFilter('quantity','availability', 'В наличии')">В наличии</button>
+      <button mat-menu-item (click)="sendFilter('quantity', 'absence', 'Нет в наличии')">Нет в наличии</button>
+    </mat-menu>
+
+    <!--end filter menu-->
+
+      <!--current filter-->
+
+
+    <div class="tags__main row" *ngIf="checkedFilter">
+      <div class="col-xs-12 col-md-4" *ngFor="let param of currentlyFilters; let i = index">
+        <div  class="tags__main__1">
+          <span>{{ param.title }}: {{ param.name }}</span><i class="material-icons" (click)="deleteFilterUserList(param, i)">close</i>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+
+    <!--end current filter-->
+
+    <!--filter menu-->
+    <button mat-raised-button [matMenuTriggerFor]="multiple">Действие для продуктов</button>
+
+    <mat-menu #multiple="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="multipleStatus">Изменить наличие</button>
+      <button mat-menu-item (click)="openDialogForMultipleMessage()">Добавить скидку</button>
+    </mat-menu>
+
+    <mat-menu #multipleStatus="matMenu">
+      <button mat-menu-item (click)="sendMultiMessage1('published')">Опубликовать</button>
+      <button mat-menu-item (click)="sendMultiMessage1('not_published')">Скрыть</button>
+    </mat-menu>
+    <!--end filter menu-->
+
+    <mat-table [dataSource]="products" style="    margin-top: 2rem;">
+
+      <ng-container cdkColumnDef="action1">
+        <mat-header-cell *cdkHeaderCellDef style="display: flex; justify-content: center;padding-left: 0">
+          <input type="checkbox" (click)="selectAll($event)" />
+        </mat-header-cell>
+        <mat-cell *cdkCellDef="let product" style="display: flex; justify-content: center;padding-left: 0">
+          <input type="checkbox" name="product_{{product.id}}" />
+        </mat-cell>
+      </ng-container>
+
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('id')"  > ID <i *ngIf="sort.id" class="fas fa-angle-up" ></i><i *ngIf="!sort.id" class="fas fa-angle-down"></i></mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="category">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('category')"> Категория <i *ngIf="sort.category" class="fas fa-angle-up" ></i><i *ngIf="!sort.category" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.category}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="article">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('article')"> Артикул <i *ngIf="sort.article" class="fas fa-angle-up" ></i><i *ngIf="!sort.article" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.article}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="price">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('price')"> Цена <i *ngIf="sort.price" class="fas fa-angle-up" ></i><i *ngIf="!sort.price" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.price}} грн </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="count_sale_product">
+        <mat-header-cell *cdkHeaderCellDef > Кол-во продаж </mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.count_sale_product}} </mat-cell>
+      </ng-container>
+
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="title">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('title')"> Название <i *ngIf="sort.title" class="fas fa-angle-up" ></i><i *ngIf="!sort.title" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let product"><a [href]="product.product_link" target="_blank">{{product.title}}</a> </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <!--<ng-container cdkColumnDef="slug">-->
+        <!--<mat-header-cell *cdkHeaderCellDef (click)="sortByValue('slug')"> ЧПУ <i *ngIf="sort.slug" class="fas fa-angle-up" ></i><i *ngIf="!sort.slug" class="fas fa-angle-down"></i> </mat-header-cell>-->
+        <!--<mat-cell *cdkCellDef="let product"> {{product.slug}} </mat-cell>-->
+      <!--</ng-container>-->
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let product" style="display: flex; flex-direction: column;">
+          <button mat-button color="primary" (click)="toUpdate(product.slug)">
+            Редактировать
+          </button>
+          <button mat-button color="warn" (click)="deleteProduct(product.slug)" *ngIf="!product.deleted_at">
+            Удалить
+          </button>
+          <button mat-button color="warn" (click)="restoreProduct(product.slug)" *ngIf="product.deleted_at">
+            Востановить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let product; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,76 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Добавить товар</mat-card-title>
+    <form #popularProductForm="ngForm" (ngSubmit)="setProduct(popularProductForm)">
+    <!--<mat-form-field>-->
+      <!--<input matInput type="text" placeholder="Артикул товара"  name="article"  [ngModel]="article">-->
+    <!--</mat-form-field>-->
+      <mat-form-field>
+        <input type="text" placeholder="Введите название товара или его артикул" required autoActiveFirstOption matInput (input)="addAnalogs($event)" name="article" [ngModel]="article" [matAutocomplete]="auto">
+      </mat-form-field>
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of options" [value]="option.article">{{option.title}}</mat-option>
+      </mat-autocomplete>
+    <button mat-raised-button type="submit" color="link">Добавить</button>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Популярные товары</mat-card-title>
+    <mat-table [dataSource]="products">
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef>ID</mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="category">
+        <mat-header-cell *cdkHeaderCellDef>Категория</mat-header-cell>
+        <mat-cell *cdkCellDef="let product">{{product.category}}</mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="article">
+        <mat-header-cell *cdkHeaderCellDef>Артикул</mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.article}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="price">
+        <mat-header-cell *cdkHeaderCellDef>Цена</mat-header-cell>
+        <mat-cell *cdkCellDef="let product"> {{product.price}} грн </mat-cell>
+      </ng-container>
+
+
+      <!-- Age Definition -->
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="title">
+        <mat-header-cell *cdkHeaderCellDef> Название </mat-header-cell>
+        <mat-cell *cdkCellDef="let product"><a [href]="product.product_link" target="_blank">{{product.title}}</a> </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <!--<ng-container cdkColumnDef="slug">-->
+        <!--<mat-header-cell *cdkHeaderCellDef> ЧПУ </mat-header-cell>-->
+        <!--<mat-cell *cdkCellDef="let product"> {{product.slug}} </mat-cell>-->
+      <!--</ng-container>-->
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let product" style="display: flex; flex-direction: column;">
+          <button mat-button color="warn" (click)="deleteProduct(product.slug)">
+            Удалить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let product; columns: displayedColumns"></mat-row>
+    </mat-table>
+  </mat-card-content>
+</mat-card>

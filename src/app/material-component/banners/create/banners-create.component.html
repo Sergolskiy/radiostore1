@@ -1,0 +1,33 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Создать баннер</mat-card-title>
+    <form [formGroup]="bannerForm" novalidate (ngSubmit)="submit()">
+
+      <br>
+      <mat-label id="img">Загрузить изображение
+        <br>
+        <input for="img" type="file" accept="image/*" (change)="setImage($event)" name="image" formControlName="image" required="required">
+      </mat-label>
+      <br>
+
+      <mat-form-field>
+        <input matInput placeholder="Ссылка"  name="link" formControlName="link" required="required">
+        <div class="alert alert-danger"
+             *ngIf="bannerForm.controls['link'].invalid && bannerForm.controls['link'].touched">
+          Некорректная ссылка
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Alt"  name="alt" formControlName="alt">
+        <div class="alert alert-danger"
+             *ngIf="bannerForm.controls['alt'].invalid && bannerForm.controls['alt'].touched">
+          Некорректные данные
+        </div>
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="bannerForm.invalid || blockSubmit">Создать</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>

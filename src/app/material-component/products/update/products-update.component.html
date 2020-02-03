@@ -1,0 +1,442 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактирование товара</mat-card-title>
+    <form [formGroup]="productForm" novalidate (ngSubmit)="submit()">
+      <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Основные данные </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <!-- Title -->
+          <mat-form-field>
+            <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+
+            <div class="alert alert-danger" *ngIf="productForm.controls['title'].invalid && productForm.controls['title'].touched">Некорректное название</div>
+          </mat-form-field>
+
+          <!-- Category -->
+          <mat-form-field>
+            <mat-select placeholder="Категория" name="category_id"  formControlName="category_id" required="required" (valueChange)="changeAttributes()">
+              <mat-option *ngFor="let category of categories" [value]="category.id">{{category.title}}</mat-option>
+            </mat-select>
+
+            <div class="alert alert-danger" *ngIf="productForm.controls['category_id'].invalid && productForm.controls['category_id'].touched">Не выбрана категория</div>
+          </mat-form-field>
+
+          <!-- Article -->
+          <mat-form-field>
+            <input matInput placeholder="Артикль"  name="article" formControlName="article" required="required">
+
+            <div class="alert alert-danger" *ngIf="productForm.controls['article'].invalid && productForm.controls['article'].touched">Некорректный артикул</div>
+
+          </mat-form-field>
+
+           <!--Barcode -->
+          <!--<mat-form-field>-->
+            <!--<input matInput placeholder="Barcode"  name="barcode" formControlName="barcode">-->
+  <!---->
+            <!--<div class="alert alert-danger" *ngIf="productForm.controls['barcode'].invalid && productForm.controls['barcode'].touched">Некорректный barcode</div>-->
+  <!---->
+          <!--</mat-form-field>-->
+
+          <!-- Guarantee -->
+          <mat-form-field>
+            <input matInput type="number" placeholder="Гарантийный срок"  name="guarantee" formControlName="guarantee">
+
+            <div class="alert alert-danger" *ngIf="productForm.controls['guarantee'].invalid && productForm.controls['guarantee'].touched">Некорректное гарантийный срок</div>
+          </mat-form-field>
+
+          <!-- Description -->
+          <mat-label id="description">Описание
+            <ck-editor for="description" placeholder="Описание" name="description" [(ngModel)]="description" [ngModelOptions]="{standalone: true}" skin="moono-lisa" language="ru"></ck-editor>
+          </mat-label>
+
+            <mat-form-field>
+                <input matInput placeholder="Мета ключевые слова(keywords)" name="meta_keywords" formControlName="meta_keywords">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Мета заголовок(title)" name="meta_title" formControlName="meta_title">
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput placeholder="Мета описание(description)" name="meta_description" formControlName="meta_description">
+            </mat-form-field>
+        </mat-expansion-panel>
+
+        <!-- Images -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Изображения </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let link of imagesLinks; let i = index">
+            <span><img src="{{link}}"> <button mat-raised-button color="warn" (click)="deleteImage(link, i)">Удалить</button></span>
+            <br>
+          </div>
+          <mat-label>Загрузить изображение
+            <br>
+              <input type="file" id="image" multiple accept="image/*" (change)="setImages($event)">
+            </mat-label>
+        </mat-expansion-panel>
+
+        <!-- Prices -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Цены </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let value of prices; let i = index">
+            <div *ngIf="!value.product_price_id">
+              <form #productPriceForm="ngForm" (ngSubmit)="setPrice(productPriceForm)">
+              <input type="hidden" name="product_price_id" [ngModel]="value.product_price_id">
+
+              <mat-form-field>
+                <input matInput type="number" step="any" placeholder="Цена"  name="price"  [ngModel]="value.price">
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput type="number" placeholder="Количество"  name="product_count" [ngModel]="value.count">
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select placeholder="Группа" name="user_group_id" [ngModel]="value.user_group_id">
+                  <mat-option *ngFor="let group of userGroups" [value]="group.id">{{group.title}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+                <button type="submit" mat-raised-button color="primary">Добавить</button>
+            </form>
+            </div>
+            <div *ngIf="value.product_price_id">
+              <form #productPriceForm="ngForm" (ngSubmit)="updatePrice(productPriceForm)">
+                <input type="hidden" name="product_price_id" [ngModel]="value.product_price_id">
+
+                <mat-form-field>
+                  <input matInput type="number" step="any" placeholder="Цена"  name="price"  [ngModel]="value.price">
+                </mat-form-field>
+
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Количество"  name="product_count" [ngModel]="value.count">
+                </mat-form-field>
+
+                <mat-form-field>
+                  <mat-select placeholder="Группа" name="user_group_id" [ngModel]="value.user_group_id">
+                    <mat-option *ngFor="let group of userGroups" [value]="group.id">{{group.title}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <button type="submit" mat-raised-button color="primary">Изменить</button>
+                <button type="button" mat-raised-button color="warn" (click)="deletePrice(value.product_price_id)">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Количество на складе </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let value of quantities; let i = index">
+            <div *ngIf="!value.product_quantity_id">
+            <form #productQuantityForm="ngForm" (ngSubmit)="setQuantity(productQuantityForm)">
+              <input type="hidden" name="product_quantity_id" [ngModel]="value.product_quantity_id">
+              <mat-form-field>
+                <input matInput type="number" placeholder="Количество"  name="quantity" [ngModel]="value.product_quantity">
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select placeholder="Склад" name="product_stock_id"  [ngModel]="value.product_stock_id">
+                  <mat-option *ngFor="let stock of stocks" [value]="stock.id">{{stock.title}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button type="submit" mat-raised-button color="primary">Добавить</button>
+            </form>
+            </div>
+            <div *ngIf="value.product_quantity_id">
+              <form #productQuantityForm="ngForm" (ngSubmit)="updateQuantity(productQuantityForm)">
+                <input type="hidden" name="product_quantity_id" [ngModel]="value.product_quantity_id">
+                <mat-form-field>
+                  <input matInput type="number" placeholder="Количество"  name="quantity" [ngModel]="value.product_quantity">
+                </mat-form-field>
+
+                <mat-form-field>
+                  <mat-select placeholder="Склад" name="product_stock_id"  [ngModel]="value.product_stock_id">
+                    <mat-option *ngFor="let stock of stocks" [value]="stock.id">{{stock.title}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <button type="submit" mat-raised-button color="primary">Изменить</button>
+                <button type="button" mat-raised-button color="warn" (click)="deleteQuantity(value.product_quantity_id)">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Совместимые модели </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div *ngFor="let model of models; let i = index">
+            <form #modelForm="ngForm" (ngSubmit)="setModel(modelForm, i)">
+              <mat-form-field>
+                <input matInput placeholder="Модель"  name="name" [ngModel]="model.name">
+                <!--<div class="alert alert-danger" *ngIf="productQuantityForm.controls['product_quantity'].invalid && productQuantityForm.controls['product_quantity'].touched">Некорректное количество</div>-->
+              </mat-form-field>
+
+              <button type="submit" mat-raised-button color="primary">Добавить</button>
+              <button type="submit" mat-raised-button color="warn" (click)="deleteModel(i)" *ngIf="!!model.name">Удалить</button>
+            </form>
+          </div>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> Аналоги </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <!--<h3></h3>-->
+
+          <form class="add_product_form" [formGroup]="addAnalogForm" novalidate (ngSubmit)="addAnalog()">
+            <h5>Добавить товар</h5>
+            <mat-form-field>
+              <input type="text" placeholder="Введите название товара или его артикул" required autoActiveFirstOption matInput (input)="addAnalogs($event)" name="sub_product_id" formControlName="sub_product_id" [matAutocomplete]="auto">
+            </mat-form-field>
+
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let option of options" [value]="option.title">{{option.title}}</mat-option>
+            </mat-autocomplete>
+
+            <button type="submit" mat-raised-button color="primary" [disabled]="addAnalogForm.invalid || !(!!reqAnalogCount)">Добавить</button>
+          </form>
+          <br>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mt-2">
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="product_id">
+              <th mat-header-cell *matHeaderCellDef> ID </th>
+              <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef> Название </th>
+              <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="article">
+              <th mat-header-cell *matHeaderCellDef> Артикул </th>
+              <td mat-cell *matCellDef="let element"> {{element.article}} </td>
+            </ng-container>
+
+            <ng-container cdkColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef> Действие </th>
+              <td mat-cell *matCellDef="let element"> <button mat-button color="primary" type="button" (click)="remove(element.id)">
+                Удалить
+              </button> </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+        </mat-expansion-panel>
+
+        <!-- Quantities -->
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> PDF файл </mat-panel-title>
+          </mat-expansion-panel-header>
+              <div *ngIf="product?.pdf">
+                <p>Файл загружен: <a href="{{product?.pdf.fullPath}}" download>Скачать файл</a></p>
+              </div>
+          <br>
+
+
+                <input type="file" placeholder="Pdf файл" accept=".pdf" (change)="setPdf($event)">
+              <br>
+          <br>
+              <button type="button" mat-raised-button color="primary" (click)="uploadPdf()">Загрузить файл</button>
+        </mat-expansion-panel>
+        <br>
+        <button type="submit" mat-raised-button color="primary" [disabled]="productForm.invalid || blockSubmit">Обновить</button>
+      </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Атрибуты и Характеристики</mat-card-title>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Атрибуты </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button type="submit" mat-raised-button (click)="openDialogForCreateAttribute()" color="primary">Добавить атрибут</button><br><br>
+      <span *ngIf="attributesArray.length; else withOutAttributes">
+              <table style="width:100%;">
+                <tr style="border-bottom: 1px solid">
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">ID</th>
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Категория</th>
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Значение</th>
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Удаление</th>
+                </tr>
+                <tr *ngFor="let attribute of attributesArray" style="text-align: center;border-bottom: 1px solid">
+                  <td>{{ attribute.id }}</td>
+                  <td>{{ attribute.title }}</td>
+                  <td>{{ attribute.value }}</td>
+                  <td><i class="material-icons" (click)="deleteAttributeFromProduct(attribute)" style="cursor: pointer">delete_forever</i></td>
+                </tr>
+              </table>
+            </span>
+      <ng-template #withOutAttributes>
+        Атрибуты у продукта отсутствуют
+      </ng-template>
+    </mat-expansion-panel>
+
+    <!-- Characteristics -->
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Характеристики </mat-panel-title>
+      </mat-expansion-panel-header>
+      <button type="submit" mat-raised-button (click)="openDialogForCreateCharacterictic()" color="primary">Добавить характеристику</button><br><br>
+      <span *ngIf="characteristicArray.length; else withOutCharacteristics">
+              <table style="width:100%;">
+                <tr style="border-bottom: 1px solid">
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">ID</th>
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Категория</th>
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Значение</th>
+                  <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Удаление</th>
+                </tr>
+                <tr *ngFor="let characteristic of characteristicArray" style="text-align: center;border-bottom: 1px solid">
+                  <td>{{ characteristic.id }}</td>
+                  <td>{{ characteristic.title }}</td>
+                  <td>{{ characteristic.value }}</td>
+                  <td><i class="material-icons" (click)="deleteCharacteristicFromProduct(characteristic)" style="cursor: pointer">delete_forever</i></td>
+                </tr>
+              </table>
+            </span>
+      <ng-template #withOutCharacteristics>
+        Характеристики у продукта отсутствуют
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Вместе дешевле</mat-card-title>
+
+    <form #togetherCheaperForm="ngForm" (ngSubmit)="togetherCheaper(togetherCheaperForm)">
+
+      <!--<mat-form-field>-->
+        <!--<input matInput type="text" placeholder="Артикул"  name="article"  [(ngModel)]="togetherCheaperArticle" required="required">-->
+      <!--</mat-form-field>-->
+
+      <mat-form-field>
+        <input type="text" placeholder="Введите название товара или его артикул" required autoActiveFirstOption matInput (input)="addAnalogs($event)" name="article" [(ngModel)]="togetherCheaperArticle" [matAutocomplete]="auto">
+      </mat-form-field>
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of options" [value]="option.article">{{option.title}}</mat-option>
+      </mat-autocomplete>
+
+      <mat-form-field>
+        <mat-select placeholder="Тип скидки" name="discount_type_id" [(ngModel)]="togetherCheaperDiscountTypeId" required="required">
+          <mat-option *ngFor="let type of discountTypes" [value]="type.id">{{type.type}}</mat-option>
+        </mat-select>
+
+        <!--<div class="alert alert-danger" *ngIf="productPriceForm.controls['user_group_id'].invalid && productPriceForm.controls['user_group_id'].touched">Не выбрана группа</div>-->
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" placeholder="Значение"  name="value"  [(ngModel)]="togetherCheaperValue" required="required">
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerFrom" placeholder="Дата начала скидки" name="start_at" [(ngModel)]="togetherCheaperStartAt">
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerTo" placeholder="Дата окончания скидки" name="end_at" [(ngModel)]="togetherCheaperEndAt">
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Дата начала скидки"  name="start_at"  [(ngModel)]="togetherCheaperStartAt" required="required">-->
+      <!--</mat-form-field>-->
+
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Дата окончания скидки"  name="end_at"  [(ngModel)]="togetherCheaperEndAt" required="required">-->
+      <!--</mat-form-field>-->
+
+      <button type="submit" mat-raised-button color="primary">Сохранить</button>
+      <button type="button" mat-raised-button color="primary" *ngIf="(togetherStatus)" (click)="togetherCheaperDelete()">Удалить</button>
+    </form>
+
+    </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Скидки</mat-card-title>
+    <div>
+    <mat-list>
+      <mat-list-item>Действующие скидки</mat-list-item>
+      <div *ngIf="product?.product_discounts">
+        <div  *ngFor="let product_discount of product?.product_discounts; let i = index">.
+
+        <mat-list-item>{{product_discount.discount.value}} {{product_discount.discount.discount_type.type}} Начала: {{product_discount.discount.startDateFormat}} Конец: {{product_discount.discount.endDateFormat}} </mat-list-item>
+        <button type="button" mat-raised-button color="primary" (click)="deleteDiscount(product_discount.id, i)">Удалить</button>
+        </div>
+      </div>
+    </mat-list>
+    </div>
+    <br>
+    <form #discountsForm="ngForm" (ngSubmit)="setDiscount(discountsForm)">
+      <mat-form-field>
+        <mat-select placeholder="Тип скидки" name="discount_type_id" [ngModel]="discount_type_id" required="required">
+          <mat-option *ngFor="let type of discountTypes" [value]="type.id">{{type.type}}</mat-option>
+        </mat-select>
+
+        <!--<div class="alert alert-danger" *ngIf="productPriceForm.controls['user_group_id'].invalid && productPriceForm.controls['user_group_id'].touched">Не выбрана группа</div>-->
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" placeholder="Значение"  name="value"  [ngModel]="value" required="required">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerDiscFrom" placeholder="Дата начала скидки" name="start_at" [ngModel]="start_at">
+        <mat-datepicker-toggle matSuffix [for]="pickerDiscFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDiscFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerDiscTo" placeholder="Дата окончания скидки" name="end_at" [ngModel]="end_at">
+        <mat-datepicker-toggle matSuffix [for]="pickerDiscTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDiscTo></mat-datepicker>
+      </mat-form-field>
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Дата начала скидки"  name="start_at"  [ngModel]="start_at" required="required">-->
+      <!--</mat-form-field>-->
+<!---->
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Дата окончания скидки"  name="end_at"  [ngModel]="end_at" required="required">-->
+      <!--</mat-form-field>-->
+
+      <button type="submit" mat-raised-button color="primary">Добавить</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Всего было продано: {{ product?.count_sale_product?.length }}</mat-card-title>
+
+  </mat-card-content>
+</mat-card>

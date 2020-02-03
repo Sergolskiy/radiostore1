@@ -1,0 +1,62 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Видеообзоры</mat-card-title>
+    <button mat-raised-button color="link" (click)="toCreate()">Создать</button>
+    <mat-table [dataSource]="articles">
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('id')" > ID <i *ngIf="sort.id" class="fas fa-angle-up" ></i><i *ngIf="!sort.id" class="fas fa-angle-down"></i></mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="title">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('title')"> Название <i *ngIf="sort.title" class="fas fa-angle-up" ></i><i *ngIf="!sort.title" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.title}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="slug">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('slug')"> ЧПУ <i *ngIf="sort.slug" class="fas fa-angle-up" ></i><i *ngIf="!sort.slug" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.slug}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="published">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('published')"> Опубликованно <i *ngIf="sort.published" class="fas fa-angle-up" ></i><i *ngIf="!sort.published" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.published}} </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="publieshedAtFormated">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('publieshedAtFormated')"> Дата публикации <i *ngIf="sort.publieshedAtFormated" class="fas fa-angle-up" ></i><i *ngIf="!sort.publieshedAtFormated" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.publieshedAtFormated}} </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="createdAtFormated">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('createdAtFormated')"> Дата создания <i *ngIf="sort.createdAtFormated" class="fas fa-angle-up" ></i><i *ngIf="!sort.createdAtFormated" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.createdAtFormated}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let item" style="display: flex; flex-direction: column;">
+          <button mat-button color="primary" (click)="toUpdate(item.slug)">
+            Редактировать
+          </button>
+          <button mat-button color="warn" (click)="deleteNews(item.slug)">
+            Удалить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let item; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>

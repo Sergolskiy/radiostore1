@@ -1,0 +1,13 @@
+.example-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+mat-cell:first-child, mat-footer-cell:first-child, mat-header-cell:first-child{
+  flex: .3;
+}
+
+//.mat-column-category{
+//  flex: 1.1 !important;
+//}

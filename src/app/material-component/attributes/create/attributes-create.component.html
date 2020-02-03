@@ -1,0 +1,35 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Создать атрибут</mat-card-title>
+    <form [formGroup]="attributeForm" novalidate (ngSubmit)="submit()">
+
+        <mat-form-field>
+          <mat-select placeholder="Тип" name="attribute_type_id"  formControlName="attribute_type_id" required="required">
+            <mat-option *ngFor="let type of types" [value]="type.id">{{type.type}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+          <div class="alert alert-danger"
+               *ngIf="attributeForm.controls['title'].invalid && attributeForm.controls['title'].touched">
+            Некорректное название
+          </div>
+        </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" placeholder="Сортировка"  name="sort_id" formControlName="sort_id">
+        <div class="alert alert-danger"
+             *ngIf="attributeForm.controls['sort_id'].invalid && attributeForm.controls['sort_id'].touched">
+          Некорректные данные
+        </div>
+      </mat-form-field>
+
+      <mat-checkbox name="is_filter" formControlName="is_filter">Фильтр</mat-checkbox>
+      <br>
+      <br>
+      <button type="submit" mat-raised-button color="primary" [disabled]="attributeForm.invalid || blockSubmit">Создать</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>

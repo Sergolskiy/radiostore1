@@ -1,0 +1,133 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактирование категории</mat-card-title>
+    <form [formGroup]="categoryForm" novalidate (ngSubmit)="submit()">
+
+      <mat-form-field>
+        <mat-select placeholder="Главная категория" name="parent_id"  formControlName="parent_id">
+          <mat-option [value]="null">Нет категории</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category.id">{{category.title}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['title'].invalid && categoryForm.controls['title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <!--<mat-form-field>-->
+      <mat-label id="description">Описание
+        <ck-editor for="description" placeholder="Описание" name="description" [(ngModel)]="description" [ngModelOptions]="{standalone: true}" skin="moono-lisa" language="ru"></ck-editor>
+      </mat-label>
+
+      <div class="alert alert-danger"
+           *ngIf="categoryForm.controls['description'].invalid && categoryForm.controls['description'].touched">
+        Некорректное описание
+      </div>
+      <!--</mat-form-field>-->
+
+      <mat-form-field>
+        <input matInput placeholder="Мета ключевые слова(keywords)" name="meta_keywords" formControlName="meta_keywords">
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['meta_keywords'].invalid && categoryForm.controls['meta_keywords'].touched">
+          Некорректные данные
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Мета заголовок(title)" name="meta_title" formControlName="meta_title">
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['meta_title'].invalid && categoryForm.controls['meta_title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Мета описание(description)" name="meta_description" formControlName="meta_description">
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['meta_description'].invalid && categoryForm.controls['meta_description'].touched">
+          Некорректное описание
+        </div>
+      </mat-form-field>
+
+      <mat-checkbox name="is_active" formControlName="is_active">Активен</mat-checkbox>
+      <br>
+      <button type="submit" mat-raised-button color="primary" [disabled]="categoryForm.invalid || blockSubmit">Обновить</button>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<!--<mat-card>-->
+  <!--<mat-card-content>-->
+    <!--<mat-card-title>Скидки</mat-card-title>-->
+    <!--<form>-->
+      <!--<div *ngIf="imagesLinks">-->
+        <!--<span><img src="{{imagesLinks}}"> <button mat-raised-button color="warn">Удалить</button></span>-->
+        <!--<br>-->
+      <!--</div>-->
+      <!--<mat-label>Загрузить изображение-->
+        <!--<br>-->
+        <!--<input type="file" id="image" multiple accept="image/*" (change)="setImages($event)">-->
+      <!--</mat-label>-->
+      <!--<br>-->
+      <!--<br>-->
+    <!--<button type="submit" mat-raised-button color="primary" (click)="submitImages()">Обновить</button>-->
+    <!--</form>-->
+  <!--</mat-card-content>-->
+<!--</mat-card>-->
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Скидки</mat-card-title>
+    <div>
+      <mat-list>
+        <mat-list-item>Действующие скидки</mat-list-item>
+        <div *ngIf="category?.category_discounts">
+          <div  *ngFor="let category_discount of category?.category_discounts; let i = index">
+            <mat-list-item>{{category_discount.discount.value}} {{category_discount.discount.discount_type.type}} Начала: {{category_discount.discount.startDateFormat}} Конец: {{category_discount.discount.endDateFormat}} </mat-list-item>
+            <button type="button" mat-raised-button color="primary" (click)="deleteDiscount(category_discount.id, i)">Удалить</button>
+          </div>
+        </div>
+      </mat-list>
+    </div>
+    <br>
+    <form #discountsForm="ngForm" (ngSubmit)="setDiscount(discountsForm)">
+      <mat-form-field>
+        <mat-select placeholder="Тип скидки" name="discount_type_id" [ngModel]="discount_type_id" required="required">
+          <mat-option *ngFor="let type of discountTypes" [value]="type.id">{{type.type}}</mat-option>
+        </mat-select>
+
+        <!--<div class="alert alert-danger" *ngIf="productPriceForm.controls['user_group_id'].invalid && productPriceForm.controls['user_group_id'].touched">Не выбрана группа</div>-->
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" placeholder="Значение"  name="value"  [ngModel]="value" required="required">
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerDiscFrom" placeholder="Дата начала скидки" name="start_at" [ngModel]="start_at" required="required">
+        <mat-datepicker-toggle matSuffix [for]="pickerDiscFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDiscFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerDiscTo" placeholder="Дата окончания скидки" name="end_at" [ngModel]="end_at" required="required">
+        <mat-datepicker-toggle matSuffix [for]="pickerDiscTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerDiscTo></mat-datepicker>
+      </mat-form-field>
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Дата начала скидки"  name="start_at"  [ngModel]="start_at" required="required">-->
+      <!--</mat-form-field>-->
+<!---->
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Дата окончания скидки"  name="end_at"  [ngModel]="end_at" required="required">-->
+      <!--</mat-form-field>-->
+<!---->
+      <button type="submit" mat-raised-button color="primary">Обновить</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>

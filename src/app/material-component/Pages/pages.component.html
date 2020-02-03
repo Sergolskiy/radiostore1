@@ -1,0 +1,33 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Статические страницы</mat-card-title>
+    <mat-table [dataSource]="pages">
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('id')" > ID <i *ngIf="sort.id" class="fas fa-angle-up" ></i><i *ngIf="!sort.id" class="fas fa-angle-down"></i></mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="title">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('title')"> Название <i *ngIf="sort.title" class="fas fa-angle-up" ></i><i *ngIf="!sort.title" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.title}} </mat-cell>
+      </ng-container>
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let item" style="display: flex; flex-direction: column;">
+          <button mat-button color="primary" (click)="toUpdate(item.id)">
+            Редактировать
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let item; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,85 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактирование видеообзора</mat-card-title>
+    <form [formGroup]="articleForm" novalidate (ngSubmit)="submit()">
+      <mat-form-field>
+        <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+        <div class="alert alert-danger"
+             *ngIf="articleForm.controls['title'].invalid && articleForm.controls['title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <!--<mat-form-field>-->
+      <!--<mat-label id="text">Текст-->
+        <ck-editor for="text" placeholder="Текст" name="text" [(ngModel)]="text" [ngModelOptions]="{standalone: true}" skin="moono-lisa" language="ru"></ck-editor>
+      <!--</mat-label>-->
+
+      <div class="alert alert-danger"
+           *ngIf="articleForm.controls['text'].invalid && articleForm.controls['text'].touched">
+        Некорректный текст
+      </div>
+      <!--</mat-form-field>-->
+
+      <mat-form-field>
+        <input matInput placeholder="Мета ключевые слова(keywords)" name="meta_keywords" formControlName="meta_keywords">
+        <div class="alert alert-danger"
+             *ngIf="articleForm.controls['meta_keywords'].invalid && articleForm.controls['meta_keywords'].touched">
+          Некорректный данные
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Мета заголовок(title)" name="meta_title" formControlName="meta_title">
+        <div class="alert alert-danger"
+             *ngIf="articleForm.controls['meta_title'].invalid && articleForm.controls['meta_title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Мета описание(description)" name="meta_description" formControlName="meta_description">
+        <div class="alert alert-danger"
+             *ngIf="articleForm.controls['meta_description'].invalid && articleForm.controls['meta_description'].touched">
+          Некорректное описание
+        </div>
+      </mat-form-field>
+
+      <!--<mat-form-field>-->
+        <!--<input matInput type="datetime-local" placeholder="Опубликовать в" name="published_at" formControlName="published_at" required="required">-->
+        <!--<div class="alert alert-danger"-->
+             <!--*ngIf="articleForm.controls['published_at'].invalid && articleForm.controls['published_at'].touched">-->
+          <!--Некорректная дата-->
+        <!--</div>-->
+      <!--</mat-form-field>-->
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Опубликовать с" name="published_at" (dateInput)="changeDate($event)" (dateChange)="changeDate($event)" formControlName="published_at" required="required">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <div class="alert alert-danger"
+             *ngIf="articleForm.controls['published_at'].invalid && articleForm.controls['published_at'].touched">
+          Некорректная дата
+        </div>
+      </mat-form-field>
+
+
+      <br>
+      <mat-form-field>
+        <input matInput placeholder="Ссылка на видео" name="link" formControlName="link" required="required">
+        <div class="alert alert-danger"
+             *ngIf="articleForm.controls['link'].invalid && articleForm.controls['link'].touched">
+          Некорректная ссылка
+        </div>
+      </mat-form-field>
+      <br>
+      <br>
+
+      <mat-checkbox name="published" formControlName="published">Опубликовано</mat-checkbox>
+      <br>
+      <br>
+      <button type="submit" mat-raised-button color="primary" [disabled]="articleForm.invalid || blockSubmit">Обновить</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,83 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Создать пользователя</mat-card-title>
+    <form [formGroup]="userForm" novalidate (ngSubmit)="submit()">
+      <mat-form-field>
+        <mat-select placeholder="Роль" name="user_role_id"  formControlName="user_role_id" required="required">
+          <mat-option *ngFor="let role of userRoles" [value]="role.id">{{role.title}}</mat-option>
+        </mat-select>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['user_role_id'].invalid && userForm.controls['user_role_id'].touched">
+              Не выбрана роль пользователя
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select placeholder="Группа" name="user_group_id"  formControlName="user_group_id" required="required">
+          <mat-option *ngFor="let group of userGroups" [value]="group.id">{{group.title}}</mat-option>
+        </mat-select>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['user_group_id'].invalid && userForm.controls['user_group_id'].touched">
+              Не выбрана группа пользователя
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Имя"  name="first_name" formControlName="first_name" required="required">
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['first_name'].invalid && userForm.controls['first_name'].touched">
+          Некорректная фамилия
+        </div>
+
+      </mat-form-field>
+        <mat-form-field>
+            <input matInput placeholder="Отчество"  name="middle_name" formControlName="middle_name" required="required">
+
+            <div class="alert alert-danger"
+                 *ngIf="userForm.controls['middle_name'].invalid && userForm.controls['middle_name'].touched">
+                Некорректное отчество
+            </div>
+        </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Фамилия" name="last_name" formControlName="last_name" required="required">
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['last_name'].invalid && userForm.controls['last_name'].touched">
+          Некорректное имя
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Email" name="email" formControlName="email" required="required" (change)="checkUniqueValue('email')">
+
+        <div class="alert alert-danger" *ngIf="!isUniqueEmail && !!userForm.controls['email'].hasError('unique')">
+          {{userForm.controls['email'].errors.unique}}
+        </div>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['email'].invalid && userForm.controls['email'].touched && isUniqueEmail">
+          Некорректный email
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [textMask]="{mask: mask}" placeholder="Телефон" name="phone" formControlName="phone" required="required" (change)="checkUniqueValue('phone')">
+
+        <div class="alert alert-danger" *ngIf="!isUniquePhone && !!userForm.controls['phone'].hasError('unique')">
+          {{userForm.controls['phone'].errors.unique}}
+        </div>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['phone'].invalid && userForm.controls['phone'].touched && isUniquePhone">
+          Некорректный телефон
+        </div>
+
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="userForm.invalid && (!isFinished) || blockSubmit">Создать</button>
+    </form>
+  </mat-card-content>
+</mat-card>

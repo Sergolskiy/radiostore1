@@ -1,0 +1,302 @@
+.example-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+
+
+.mat-form-field-wrapper{
+
+  width: 100% !important;
+
+}
+
+
+mat-cell:first-child, mat-footer-cell:first-child, mat-header-cell:first-child{
+  flex: .3;
+}
+
+
+mat-cell{
+  display: flex;
+  justify-content: center;
+}
+
+.mat-form-field {
+  width: 50%!important;
+}
+
+
+mat-header-row{
+  width: 100%;
+}
+
+.mat-header-row{
+
+  width: 100%;
+
+}
+
+.mat-header-cell{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+// Animations
+
+@keyframes slideIn {
+  0% {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  100% {
+    max-height: 999px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    height: auto;
+    opacity: 1;
+  }
+
+  100% {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.tree{
+  list-style-type: none;
+}
+
+.tree,
+.subtree {
+  list-style-type: none;
+}
+
+.subtree {
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 0;
+
+  margin-top: -15px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.14);
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-left: 29px;
+  padding-right: 29px;
+
+}
+
+.tree-toggle-label {
+  user-select: none;
+  cursor: pointer;
+  &:after {
+    display: inline-block;
+    content: "+";
+    color: #999;
+    margin-left: 8px;
+  }
+}
+
+.tree-toggle {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+.tree-toggle:checked + .tree-toggle-label:after {
+  content: "-";
+}
+
+.tree-toggle + .tree-toggle-label + .subtree {
+  animation-name: slideOut;
+  animation-duration: 0.25s;
+  animation-fill-mode: both;
+}
+
+.tree-toggle:checked + .tree-toggle-label + .subtree {
+  animation-name: slideIn;
+  animation-duration: 0.25s;
+  animation-fill-mode: both;
+}
+
+
+.tree__123{
+
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  padding: 0;
+  margin-top: 1rem;
+  background: #de949b;
+  border-radius: 2px;
+
+  li{
+
+  }
+
+
+  .tree__123_1{
+
+
+
+  }
+
+}
+
+
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  text-align: left;
+  //background: rgba(0,0,0, .9);
+  transition: opacity .25s ease;
+}
+
+.modal__bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.modal-state {
+  display: none;
+}
+
+.modal-state:checked + .modal {
+  display: flex!important;
+}
+
+.modal-state:checked + .modal .modal__inner {
+  top: 0;
+}
+
+.modal__inner {
+  transition: top .25s ease;
+  position: absolute;
+  top: -20%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  margin: auto;
+  overflow: auto;
+  border-radius: 5px;
+  padding: 1em 2em;
+  padding-top: 50px;
+  height: 50%;
+  border: 2px solid;
+  background: #bcbfd0;
+}
+
+.modal__close {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  width: 1.1em;
+  height: 1.1em;
+  cursor: pointer;
+}
+
+.modal__close:after,
+.modal__close:before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 1.5em;
+  background: #fff;
+  display: block;
+  transform: rotate(45deg);
+  left: 50%;
+  margin: -3px 0 0 -1px;
+  top: 0;
+}
+
+.modal__close:hover:after,
+.modal__close:hover:before {
+  background: #aaa;
+}
+
+.modal__close:before {
+  transform: rotate(-45deg);
+}
+
+@media screen and (max-width: 768px) {
+
+  .modal__inner {
+    width: 90%;
+    height: 90%;
+    box-sizing: border-box;
+  }
+}
+
+
+.btn {
+  cursor: pointer;
+  background: #27ae60;
+  display: inline-block;
+  padding: .5em 1em;
+  color: #fff;
+  border-radius: 3px;
+}
+
+.tags__main{
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+
+  .tags__main__1{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c7d6f1;
+    padding: 20px;
+    position: relative;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    border-radius: 2px;
+
+    margin-bottom: 10px;
+
+    span{
+      font-size: 14px;
+    }
+
+    i{
+      cursor: pointer;
+      font-size: 14px;
+      padding-top: 1px;
+      padding-left: 2px;
+      position: absolute;
+      right: 0;
+      top: 0;
+
+      &:hover{
+
+        color: #cc0000;
+        transition: 0.3s all;
+
+      }
+    }
+
+  }
+
+}

@@ -1,0 +1,137 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Пользователи</mat-card-title>
+    <button mat-raised-button color="link" (click)="toCreate()">Создать</button>
+
+    <form #searchForm="ngForm" (ngSubmit)="search(searchForm)" style="display: inline-flex;
+    align-items: center;
+    float: right;">
+
+      <mat-form-field style="margin-right: 1rem;">
+        <input matInput type="text" placeholder="Поиск"  name="searcher"  [(ngModel)]="searcher">
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary">Искать</button>
+    </form>
+
+    <!--filter menu-->
+
+    <br>
+    <br>
+
+    <button mat-raised-button [matMenuTriggerFor]="menu">Отфильтруйте клиентов</button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="tags">Метки покупателя</button>
+      <button mat-menu-item [matMenuTriggerFor]="review">Наличие отзыва о компании</button>
+      <button mat-menu-item [matMenuTriggerFor]="period">Период заказа</button>
+    </mat-menu>
+
+    <mat-menu #tags="matMenu">
+      <div *ngFor="let userType of userTypes">
+        <button mat-menu-item (click)="filterUserList('tags', userType, 'Метки')">{{ userType.title }}</button>
+      </div>
+    </mat-menu>
+
+    <mat-menu #review="matMenu">
+      <button mat-menu-item (click)="filterUserList('comment', true, 'Отзыв о компании', 'Оставившее отзыв')">Оставившее отзыв</button>
+      <button mat-menu-item (click)="filterUserList('comment', false, 'Отзыв о компании', 'Не оставившее отзыв')">Не оставившее отзыв</button>
+    </mat-menu>
+
+    <mat-menu #period="matMenu">
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 1, 'Период', 'Более 1 месяца')">Более 1 месяца</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 2, 'Период', 'Более 2 месяцов')">Более 2 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 3, 'Период', 'Более 3 месяцов')">Более 3 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 4, 'Период', 'Более 4 месяцов')">Более 4 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 5, 'Период', 'Более 5 месяцов')">Более 5 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 6, 'Период', 'Более 6 месяцов')">Более 6 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 7, 'Период', 'Более 7 месяцов')">Более 7 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 8, 'Период', 'Более 8 месяцов')">Более 8 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 9, 'Период', 'Более 9 месяцов')">Более 9 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 10, 'Период', 'Более 10 месяцов')">Более 10 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 11, 'Период', 'Более 11 месяцов')">Более 11 месяцов</button>
+      <button mat-menu-item (click)="filterUserList('orderPeriod', 12, 'Период', 'Более 12 месяцов')">Более 12 месяцов</button>
+    </mat-menu>
+
+    <!--end filter menu-->
+
+    <!--current filter-->
+
+    <div class="tags__main row">
+
+        <div class="col-xs-12 col-md-4" *ngFor="let param of currentlyFilters; let i = index">
+
+          <div  class="tags__main__1">
+            <span>{{ param.title }}: {{ param.name }}</span><i class="material-icons" (click)="deleteFilterUserList(param, i)">close</i>
+            <span></span>
+          </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!--end current filter-->
+
+    <mat-table [dataSource]="users" style="margin-top: 2rem;">
+
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('id')" > ID <i *ngIf="sort.id" class="fas fa-angle-up" ></i><i *ngIf="!sort.id" class="fas fa-angle-down"></i></mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> {{user.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="first_name">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('first_name')"> Имя <i *ngIf="sort.first_name" class="fas fa-angle-up" ></i><i *ngIf="!sort.first_name" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> {{user.first_name}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="last_name">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('last_name')"> Фамилия <i *ngIf="sort.last_name" class="fas fa-angle-up" ></i><i *ngIf="!sort.last_name" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> {{user.last_name}} </mat-cell>
+      </ng-container>
+
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="email">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('email')"> Email <i *ngIf="sort.email" class="fas fa-angle-up" ></i><i *ngIf="!sort.email" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{user.email}}</span> </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="user_role_id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('user_role_id')"> Роль <i *ngIf="sort.role" class="fas fa-angle-up" ></i><i *ngIf="!sort.user_role_id" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> {{user.role.title}} </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="user_group_id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('user_group_id')"> Группа <i *ngIf="sort.user_group_id" class="fas fa-angle-up" ></i><i *ngIf="!sort.user_group_id" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> {{user.group.title}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let user" style="display: flex; flex-direction: column;">
+          <button mat-button color="primary" (click)="toUpdate(user.id)">
+            Редактировать
+          </button>
+          <button mat-button color="warn" (click)="deleteUser(user.id)">
+            Удалить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let user; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>

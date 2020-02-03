@@ -1,0 +1,344 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактирование заказа</mat-card-title>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> О клиенте </mat-panel-title>
+      </mat-expansion-panel-header>
+      <form [formGroup]="orderForm" novalidate (ngSubmit)="submit()">
+
+        <mat-form-field>
+          <input matInput placeholder="Фамилия" name="last_name" formControlName="last_name">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Имя"  name="first_name" formControlName="first_name">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Отчество"  name="middle_name" formControlName="middle_name">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Email" name="email" formControlName="email" required="required">
+
+
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Телефон" [textMask]="{mask: mask}" name="phone" formControlName="phone">
+
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Статус заказа" name="status"  formControlName="status" required="required">
+            <mat-option *ngFor="let role of statuses" [value]="role.id">{{role.title}}</mat-option>
+          </mat-select>
+
+        </mat-form-field>
+        <div *ngIf="orderForm.controls['status'].value == 8">
+          <button type="button" mat-raised-button color="primary" (click)="statusConfirm()">Подтвердить заказ</button>
+          <br><br>
+          <button type="button" mat-raised-button color="primary" (click)="statusCancel()">Отменить заказ</button>
+        </div>
+        <mat-form-field>
+          <mat-select placeholder="Доставка" name="delivery" formControlName="delivery" required="required">
+            <mat-option *ngFor="let group of deliveries" [value]="group.id">{{group.title}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <ng-container *ngIf="orderForm.controls['delivery'].value == 2  && !ttn">
+          <div (click)="ShowChangeDelivery()" style="width: 230px;height: 50px;border: 2px solid black;display: flex;align-items: center;justify-content: center;margin-bottom: 25px;background: #1e88e5;color: #fff;font-weight: bold;border: none;border-radius: 4px;">
+              {{buttonName}}
+          </div>
+
+          <ng-container *ngIf="show">
+            <mat-form-field>
+              <input type="text" placeholder="Введите название города" required autoActiveFirstOption matInput (input)="addCitiesForUpdate($event)" name="cityUpdate" formControlName="cityUpdate" (change)="addCityForUpdate()" [matAutocomplete]="auto">
+            </mat-form-field>
+
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let option of optionsCitiesForUpdate" [value]="option.DescriptionRu">{{option.DescriptionRu}}</mat-option>
+            </mat-autocomplete>
+
+            <mat-form-field>
+              <mat-select placeholder="Адрес" name="addressUpdate" formControlName="addressUpdate" required="required">
+                <mat-option *ngFor="let address of optionsAddressForUpdate" [value]="address.DescriptionRu">{{address.DescriptionRu}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </ng-container>
+        </ng-container>
+
+        <div *ngIf="!!ttn">
+          <h4>TTN: {{ttn}}</h4>
+        </div>
+
+          <ng-container *ngIf="!show">
+            <mat-form-field >
+              <textarea matInput placeholder="Адресс доставки" name="address" formControlName="address" required="required"></textarea>
+            </mat-form-field>
+          </ng-container>
+
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker" placeholder="Дата отправления" (dateInput)="changeDate($event)" (dateChange)="changeDate($event)" name="send_at" formControlName="send_at">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Оплата" name="payment"  formControlName="payment" required="required">
+            <mat-option *ngFor="let group of payments" [value]="group.id">{{group.title}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field >
+          <textarea matInput placeholder="Заметки" name="admin_comment" formControlName="admin_comment"></textarea>
+        </mat-form-field>
+
+        <div class="d-flex justify-content-between">
+          <button type="submit" mat-raised-button color="primary" [disabled]="orderForm.invalid || blockSubmit">Обновить</button>
+
+          <a [attr.href]="order_liqpay_link" target="_blank" mat-raised-button *ngIf="!!order_liqpay_link">Отметь оплату</a>
+        </div>
+      </form>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Продукты </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <!--<h3></h3>-->
+
+      <form class="add_product_form" [formGroup]="addProductForm" novalidate (ngSubmit)="addProduct()">
+        <h5>Добавить товар в заказ</h5>
+        <mat-form-field>
+          <input type="text" placeholder="Введите название товара" required autoActiveFirstOption matInput (input)="addProducts($event)" formControlName="product_id" [matAutocomplete]="auto">
+        </mat-form-field>
+
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of options" [value]="option.title">{{option.title}}</mat-option>
+        </mat-autocomplete>
+
+        <mat-form-field>
+          <input matInput placeholder="Количество" name="count" formControlName="quantity" required>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" [disabled]="addProductForm.invalid">
+          Добавить
+        </button>
+      </form>
+
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mt-4">
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="article">
+          <th mat-header-cell *matHeaderCellDef> Код товара </th>
+          <td mat-cell *matCellDef="let element"> <a target="_blank" href="/products/{{ element.product.slug }}">{{element.product.article}}</a> </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef> Название </th>
+          <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef> Цена за 1 товар </th>
+          <td mat-cell *matCellDef="let element"> {{element.price}} </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef> Количество </th>
+          <td mat-cell *matCellDef="let element"> {{element.quantity}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="total_price">
+          <th mat-header-cell *matHeaderCellDef> Общая цена </th>
+          <td mat-cell *matCellDef="let element"> {{element.total_price}} </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> Действие </th>
+          <td mat-cell *matCellDef="let element"> <button mat-button color="primary" (click)="remove(element.id)">
+            Удалить
+          </button> </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <table class="mat-elevation-z8 mt-4 mat-table">
+        <tr class="mat-row ng-star-inserted">
+          <th class="text-right p-1" colspan="3">Общая количество</th>
+          <th>{{total_quantity}} шт.</th>
+        </tr>
+        <tr class="mat-row ng-star-inserted">
+          <th class="text-right p-1" colspan="3">Общая сумма</th>
+          <th>{{total_price}} грн.</th>
+        </tr>
+      </table>
+    </mat-expansion-panel>
+    <div *ngIf="orderForm.controls['delivery'].value == 2">
+      <div *ngIf="!ttn">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Создать ТТН </mat-panel-title>
+      </mat-expansion-panel-header>
+      <form [formGroup]="ttnForm" novalidate (ngSubmit)="ttnSubmit()">
+        <h3>Информация об отправителе</h3>
+        <mat-form-field>
+          <mat-select placeholder="Отправитель" name="sender" formControlName="sender" required="required">
+            <mat-option *ngFor="let sender of senders" [value]="sender.Ref">{{sender.Description}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!--<mat-form-field>-->
+          <!--<input matInput placeholder="Город" name="sender_city" formControlName="sender_city" required="required">-->
+        <!--</mat-form-field>-->
+        <mat-form-field>
+          <input type="text" placeholder="Введите название города" required autoActiveFirstOption matInput (input)="addCitys($event)" (change)="addCity()" formControlName="sender_city" [matAutocomplete]="auto">
+        </mat-form-field>
+
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of optionsCity" [value]="option.DescriptionRu">{{option.DescriptionRu}}</mat-option>
+        </mat-autocomplete>
+
+        <mat-form-field>
+          <mat-select placeholder="Адрес" name="sender_addressref" formControlName="sender_addressref" required="required">
+            <mat-option *ngFor="let address of optionsAddress" [value]="address.Ref">{{address.DescriptionRu}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!--<mat-form-field>-->
+          <!--<input matInput placeholder="Регион" name="sender_region" formControlName="sender_region" required="required">-->
+        <!--</mat-form-field>-->
+        <!--<h3>Информация о получателе</h3>-->
+        <!--<mat-form-field>-->
+          <!--<input matInput placeholder="Регион" name="recipient_Region" formControlName="recipient_Region" required="required">-->
+        <!--</mat-form-field>-->
+        <h3>Информация о поссылке</h3>
+        <!--<mat-form-field>-->
+          <!--<mat-select placeholder="Вид оплаты" name="PaymentMethod" formControlName="PaymentMethod" required="required">-->
+            <!--<mat-option value="NonCash">Безналичный расчет</mat-option>-->
+            <!--<mat-option value="Cash">Наличный расчет</mat-option>-->
+          <!--</mat-select>-->
+        <!--</mat-form-field>-->
+        <mat-form-field>
+          <mat-select placeholder="Кто оплачивает доставку" name="PayerType" formControlName="PayerType" required="required">
+            <mat-option value="Sender">Отправитель</mat-option>
+            <mat-option value="Recipient">Получатель</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Тип груза" name="CargoType" formControlName="CargoType">
+            <mat-option value="Cargo">Вантаж</mat-option>
+            <mat-option value="Documents">Документи</mat-option>
+            <mat-option value="TiresWheels">Шини-диски</mat-option>
+            <mat-option value="Pallet">Палети</mat-option>
+            <mat-option value="Parcel">Посилка</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="number" placeholder="Кол-во мест" name="SeatsAmount" formControlName="SeatsAmount" required="required">
+        </mat-form-field>
+        <mat-form-field>
+          <textarea matInput placeholder="Описание" name="Description" formControlName="Description" required="required"></textarea>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="number" step="any" placeholder="Вес" name="Weight" formControlName="Weight" required="required">
+        </mat-form-field>
+        <mat-form-field style="display: inline-block; width: 100px;">
+          <input matInput type="number" step="any" (keyup)="calcNP()" placeholder="Ширина, см" name="c_width" formControlName="c_width">
+        </mat-form-field>
+        <mat-form-field style="display: inline-block; width: 100px;">
+          <input matInput type="number" step="any" (keyup)="calcNP()" placeholder="Высота, см" name="c_height" formControlName="c_height">
+        </mat-form-field>
+        <mat-form-field style="display: inline-block; width: 100px;">
+          <input matInput type="number" step="any" (keyup)="calcNP()" placeholder="Длина, см" name="c_yardage" formControlName="c_yardage">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="number" step="any" placeholder="Объем груза в куб.м." name="VolumeGeneral" formControlName="VolumeGeneral" required="required">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="text" placeholder="Цена" name="NpPrice" formControlName="NpPrice">
+        </mat-form-field>
+        <mat-checkbox name="BackwardDelivery" formControlName="BackwardDelivery">С обратной доставкой</mat-checkbox>
+        <br>
+        <br>
+        <div *ngIf="!!ttnForm.controls['BackwardDelivery'].value">
+        <h3>Обратная доставка</h3>
+        <mat-form-field>
+          <mat-select placeholder="Кто оплачивает доставку" name="BackwardPayerType" formControlName="BackwardPayerType">
+            <mat-option value="Sender">Отправитель</mat-option>
+            <mat-option value="Recipient">Получатель</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Тип груза" name="BackwardCargoType" formControlName="BackwardCargoType">
+            <mat-option value="Documents">Документи</mat-option>
+            <mat-option value="Money">Цінні папери</mat-option>
+            <mat-option value="Trays">Піддони</mat-option>
+            <mat-option value="Other">Інше</mat-option>
+          </mat-select>
+        </mat-form-field>
+        </div>
+        <button type="submit" mat-raised-button color="primary" [disabled]="ttnForm.invalid">Сохранить</button>
+      </form>
+    </mat-expansion-panel>
+      </div>
+    </div>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Отправить сообщение </mat-panel-title>
+      </mat-expansion-panel-header>
+      <form [formGroup]="phoneForm" novalidate (ngSubmit)="sendMessage()">
+        <mat-checkbox name="send_email" formControlName="send_email">На почту</mat-checkbox>
+        <br>
+        <mat-checkbox name="send_phone" formControlName="send_phone">На телефон</mat-checkbox>
+        <br>
+        <mat-form-field>
+          <textarea matInput placeholder="Сообщение" name="message" formControlName="message" required="required"></textarea>
+        </mat-form-field>
+        <br>
+        <div class="alert alert-danger"
+             *ngIf="phoneForm.invalid">
+          Выберите способ отправки и заполните поле сообщения
+        </div>
+        <button type="submit" mat-raised-button color="primary" [disabled]="phoneForm.invalid">Отправить</button>
+      </form>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> История заказа</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div *ngIf="order.status_history; else withOutOrder ">
+        <table mat-table [dataSource]="historyDataSource" class="mat-elevation-z8 mt-4">
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="created_at">
+            <th mat-header-cell *matHeaderCellDef> Дата </th>
+            <td mat-cell *matCellDef="let history"> {{history.created_at}} </td>
+          </ng-container>
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="user_id">
+            <th mat-header-cell *matHeaderCellDef> Пользователь </th>
+            <td mat-cell *matCellDef="let element"> {{element.user_id}} </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="comment">
+            <th mat-header-cell *matHeaderCellDef> История </th>
+            <td mat-cell *matCellDef="let history"> {{history.comment}} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsHistory"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsHistory;"></tr>
+        </table>
+      </div>
+      <ng-template #withOutOrder>
+        Нет истории заказа
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-card-content>
+</mat-card>

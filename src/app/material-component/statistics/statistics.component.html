@@ -1,0 +1,40 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Statistics</mat-card-title>
+
+    <form #statisticsSetPeriodForm="ngForm" (ngSubmit)="setPeriod(statisticsSetPeriodForm)">
+
+      <mat-form-field>
+        <input matInput placeholder="Filter"  name="filter" formControlName="filter" required="required">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerFrom" placeholder="Дата начала" name="date_from" [(ngModel)]="statisticsDateFrom">
+        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput [matDatepicker]="pickerTo" placeholder="Дата окончания" name="date_to" [(ngModel)]="statisticsDateTo">
+        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary">Ok</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>
+
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>test Chart</mat-card-title>
+
+<!--    <div id="amcharts"></div>-->
+    <div id="chartdiv" [style.width.%]="100" [style.height.px]="500"></div>
+
+
+  </mat-card-content>
+</mat-card>
+

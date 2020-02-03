@@ -1,0 +1,34 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактирование страницы: {{page?.title}}</mat-card-title>
+    <form [formGroup]="pageForm" novalidate (ngSubmit)="submit()">
+      <mat-form-field>
+        <input matInput placeholder="Мета ключевые слова(keywords)" name="meta_keywords" formControlName="meta_keywords">
+        <div class="alert alert-danger"
+             *ngIf="pageForm.controls['meta_keywords'].invalid && pageForm.controls['meta_keywords'].touched">
+          Некорректный данные
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Мета заголовок(title)" name="meta_title" formControlName="meta_title">
+        <div class="alert alert-danger"
+             *ngIf="pageForm.controls['meta_title'].invalid && pageForm.controls['meta_title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Мета описание(description)" name="meta_description" formControlName="meta_description">
+        <div class="alert alert-danger"
+             *ngIf="pageForm.controls['meta_description'].invalid && pageForm.controls['meta_description'].touched">
+          Некорректное описание
+        </div>
+      </mat-form-field>
+
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="pageForm.invalid || blockSubmit">Обновить</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>

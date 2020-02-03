@@ -1,0 +1,60 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Создать категорию</mat-card-title>
+    <form [formGroup]="categoryForm" novalidate (ngSubmit)="submit()">
+
+      <mat-form-field>
+        <mat-select placeholder="Главная категория" name="parent_id"  formControlName="parent_id">
+          <mat-option [value]="null">Нет категории</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category.id">{{category.title}}</mat-option>
+        </mat-select>
+        </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['title'].invalid && categoryForm.controls['title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <!--<mat-form-field>-->
+        <mat-label id="description">Описание
+          <ck-editor for="description" placeholder="Описание" name="description" formControlName="description" skin="moono-lisa" language="ru"></ck-editor>
+        </mat-label>
+
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['description'].invalid && categoryForm.controls['description'].touched">
+          Некорректное описание
+        </div>
+      <!--</mat-form-field>-->
+
+      <mat-form-field>
+        <input matInput placeholder="Мета ключевые слова(keywords)" name="meta_keywords" formControlName="meta_keywords">
+        <div class="alert alert-danger"
+             *ngIf="categoryForm.controls['meta_keywords'].invalid && categoryForm.controls['meta_keywords'].touched">
+          Некорректные данные
+        </div>
+      </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Мета заголовок(title)" name="meta_title" formControlName="meta_title">
+          <div class="alert alert-danger"
+               *ngIf="categoryForm.controls['meta_title'].invalid && categoryForm.controls['meta_title'].touched">
+            Некорректное название
+          </div>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Мета описание(description)" name="meta_description" formControlName="meta_description">
+          <div class="alert alert-danger"
+               *ngIf="categoryForm.controls['meta_description'].invalid && categoryForm.controls['meta_description'].touched">
+            Некорректное описание
+          </div>
+        </mat-form-field>
+
+         <mat-checkbox name="is_active" formControlName="is_active">Активен</mat-checkbox>
+      <br>
+      <button type="submit" mat-raised-button color="primary" [disabled]="categoryForm.invalid || blockSubmit">Создать</button>
+    </form>
+  </mat-card-content>
+</mat-card>

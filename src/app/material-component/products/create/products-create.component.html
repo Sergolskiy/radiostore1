@@ -1,0 +1,188 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Создать товара</mat-card-title>
+    <form [formGroup]="productForm" novalidate (ngSubmit)="submit()">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Основные данные </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <!-- Title -->
+        <mat-form-field>
+          <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+
+          <div class="alert alert-danger" *ngIf="productForm.controls['title'].invalid && productForm.controls['title'].touched">Некорректное название</div>
+        </mat-form-field>
+
+        <!-- Category -->
+        <mat-form-field>
+          <mat-select placeholder="Категория" name="category_id"  formControlName="category_id" required="required" (valueChange)="changeAttributes()">
+            <mat-option *ngFor="let category of categories" [value]="category.id">{{category.title}}</mat-option>
+          </mat-select>
+
+          <div class="alert alert-danger" *ngIf="productForm.controls['category_id'].invalid && productForm.controls['category_id'].touched">Не выбрана категория</div>
+        </mat-form-field>
+
+        <!-- Article -->
+        <mat-form-field>
+          <input matInput placeholder="Артикул"  name="article" formControlName="article" required="required">
+
+          <div class="alert alert-danger" *ngIf="productForm.controls['article'].invalid && productForm.controls['article'].touched">Некорректный артикул</div>
+
+        </mat-form-field>
+
+        <!-- Barcode -->
+        <!--<mat-form-field>-->
+          <!--<input matInput placeholder="Barcode"  name="barcode" formControlName="barcode">-->
+<!---->
+          <!--<div class="alert alert-danger" *ngIf="productForm.controls['barcode'].invalid && productForm.controls['barcode'].touched">Некорректный barcode</div>-->
+<!---->
+        <!--</mat-form-field>-->
+
+        <!-- Guarantee -->
+        <mat-form-field>
+          <input matInput type="number" placeholder="Гарантийный срок"  name="guarantee" formControlName="guarantee">
+
+          <div class="alert alert-danger" *ngIf="productForm.controls['guarantee'].invalid && productForm.controls['guarantee'].touched">Некорректное гарантийный срок</div>
+        </mat-form-field>
+
+        <!-- Description -->
+        <mat-label id="description">Описание
+          <ck-editor for="description" placeholder="Описание" name="description" formControlName="description" skin="moono-lisa" language="ru"></ck-editor>
+        </mat-label>
+
+        <mat-form-field>
+          <input matInput placeholder="Мета ключевые слова(keywords)" name="meta_keywords" formControlName="meta_keywords">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Мета заголовок(title)" name="meta_title" formControlName="meta_title">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="Мета описание(description)" name="meta_description" formControlName="meta_description">
+        </mat-form-field>
+      </mat-expansion-panel>
+
+
+
+      <!-- Attributes -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Атрибуты </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngFor="let attribute of attributes">
+          <mat-form-field>
+            <mat-select placeholder="{{attribute.title}}" name="attributes[attribute.id]"  formControlName="attributes">
+              <mat-option *ngFor="let attributeValue of attribute.values" [value]="attributeValue.id" (click)="setAttributes({ id: attribute.id, value: attributeValue.id })">{{attributeValue.value}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Characteristics -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Характеристики </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngFor="let characteristic of characteristics">
+          <mat-form-field>
+            <mat-select placeholder="{{characteristic.title}}" name="characteristics[characteristic.id]"  formControlName="characteristics">
+              <mat-option *ngFor="let attributeValue of characteristic.values" [value]="attributeValue.id" (click)="setCharacteristic({ id: characteristic.id, value: attributeValue.id })">{{attributeValue.value}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Images -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Изображения </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-label>Загрузить изображение
+          <br>
+        <input type="file" id="image" multiple accept="image/*" (change)="setImages($event)">
+        </mat-label>
+      </mat-expansion-panel>
+
+      <!-- Prices -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Цены </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngFor="let value of prices; let i = index">
+          <form [formGroup]="productPriceForm" novalidate (ngSubmit)="productPrice(value, i)">
+
+            <mat-form-field>
+              <input matInput type="number" step="any" placeholder="Цена"  name="price" formControlName="price" [value]="value.price">
+              <div class="alert alert-danger" *ngIf="productPriceForm.controls['price'].invalid && productPriceForm.controls['price'].touched">Некорректная цена</div>
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput type="number" placeholder="Количество"  name="count" formControlName="count" [value]="value.count">
+              <div class="alert alert-danger" *ngIf="productPriceForm.controls['count'].invalid && productPriceForm.controls['count'].touched">Некорректное количество</div>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-select placeholder="Группа" name="user_group_id"  formControlName="user_group_id">
+                <mat-option *ngFor="let group of userGroups" [value]="group.id">{{group.title}}</mat-option>
+              </mat-select>
+
+              <div class="alert alert-danger" *ngIf="productPriceForm.controls['user_group_id'].invalid && productPriceForm.controls['user_group_id'].touched">Не выбрана группа</div>
+            </mat-form-field>
+
+            <button type="submit" mat-raised-button color="primary" [disabled]="productPriceForm.invalid">Добавить</button>
+            <button type="submit" mat-raised-button color="warn" (click)="deleteProductPrice(i)" *ngIf="!!value.price && !!value.count">Удалить</button>
+
+          </form>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Quantities -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Количество на складе </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngFor="let value of quantities; let i = index">
+          <form [formGroup]="productQuantityForm" novalidate (ngSubmit)="productQuantity(value, i)">
+            <mat-form-field>
+              <input matInput type="number" placeholder="Количество"  name="product_quantity" formControlName="product_quantity" [value]="value.product_quantity">
+              <div class="alert alert-danger" *ngIf="productQuantityForm.controls['product_quantity'].invalid && productQuantityForm.controls['product_quantity'].touched">Некорректное количество</div>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-select placeholder="Склад" name="product_stock_id"  formControlName="product_stock_id" required="required">
+                <mat-option *ngFor="let stock of stocks" [value]="stock.id">{{stock.title}}</mat-option>
+              </mat-select>
+
+              <div class="alert alert-danger" *ngIf="productQuantityForm.controls['product_stock_id'].invalid && productQuantityForm.controls['product_stock_id'].touched">Не выбран склад</div>
+            </mat-form-field>
+
+            <button type="submit" mat-raised-button color="primary" [disabled]="productQuantityForm.invalid">Добавить</button>
+            <button type="submit" mat-raised-button color="warn" (click)="deleteProductQuantity(i)" *ngIf="!!value.product_quantity && !!value.product_stock_id">Удалить</button>
+          </form>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title> Совместимые модели </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div *ngFor="let model of models; let i = index">
+          <form #modelForm="ngForm" (ngSubmit)="setModel(modelForm, i)">
+            <mat-form-field>
+              <input matInput placeholder="Модель"  name="name" [ngModel]="model.name">
+              <!--<div class="alert alert-danger" *ngIf="productQuantityForm.controls['product_quantity'].invalid && productQuantityForm.controls['product_quantity'].touched">Некорректное количество</div>-->
+            </mat-form-field>
+
+            <button type="submit" mat-raised-button color="primary">Добавить</button>
+            <button type="submit" mat-raised-button color="warn" (click)="deleteModel(i)" *ngIf="!!model.name">Удалить</button>
+          </form>
+        </div>
+      </mat-expansion-panel>
+
+      <br>
+      <button type="submit" mat-raised-button color="primary" [disabled]="productForm.invalid || blockSubmit">Подтвердить</button>
+    </form>
+  </mat-card-content>
+</mat-card>

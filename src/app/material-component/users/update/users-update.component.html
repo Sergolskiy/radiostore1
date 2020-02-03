@@ -1,0 +1,226 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактирование пользователя</mat-card-title>
+    <form [formGroup]="userForm" novalidate (ngSubmit)="submit()">
+      <mat-form-field>
+        <mat-select placeholder="Роль" name="user_role_id"  formControlName="user_role_id" required="required">
+          <mat-option *ngFor="let role of userRoles" [value]="role.id">{{role.title}}</mat-option>
+        </mat-select>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['user_role_id'].invalid && userForm.controls['user_role_id'].touched">
+          Не выбрана роль пользователя
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select placeholder="Группа" name="user_group_id"  formControlName="user_group_id" required="required">
+          <mat-option *ngFor="let group of userGroups" [value]="group.id">{{group.title}}</mat-option>
+        </mat-select>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['user_group_id'].invalid && userForm.controls['user_group_id'].touched">
+          Не выбрана группа пользователя
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Имя"  name="first_name" formControlName="first_name" required="required">
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['first_name'].invalid && userForm.controls['first_name'].touched">
+          Некорректное имя
+        </div>
+
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Отчество"  name="middle_name" formControlName="middle_name" required="required">
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['middle_name'].invalid && userForm.controls['middle_name'].touched">
+          Некорректное отчество
+        </div>
+
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Фамилия" name="last_name" formControlName="last_name" required="required">
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['last_name'].invalid && userForm.controls['last_name'].touched">
+          Некорректная фамилия
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Email" name="email" formControlName="email" required="required" (change)="checkUniqueValue('email')">
+
+        <div class="alert alert-danger" *ngIf="!isUniqueEmail && !!userForm.controls['email'].hasError('unique')">
+          {{userForm.controls['email'].errors.unique}}
+        </div>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['email'].invalid && userForm.controls['email'].touched && isUniqueEmail">
+          Некорректный email
+        </div>
+
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput [textMask]="{mask: mask}" placeholder="Телефон" name="phone" formControlName="phone" (change)="checkUniqueValue('phone')">
+
+        <div class="alert alert-danger" *ngIf="!isUniquePhone && !!userForm.controls['phone'].hasError('unique')">
+          {{userForm.controls['phone'].errors.unique}}
+        </div>
+
+        <div class="alert alert-danger"
+             *ngIf="userForm.controls['phone'].invalid && userForm.controls['phone'].touched && isUniquePhone">
+          Некорректный телефон
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea matInput placeholder="Примечание" md-maxlength="150" rows="5" md-select-on-focus="" name="note" formControlName="note"></textarea>
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="userForm.invalid || blockSubmit">Обновить</button>
+    </form>
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+    <mat-card-content>
+        <mat-card-title>Адрес клиента</mat-card-title>
+        <mat-card-subtitle>
+            <div *ngIf="address; else withoutAddress">
+                {{this.address}}
+            </div>
+
+            <ng-template #withoutAddress>
+                Адрес отсутствует
+            </ng-template>
+        </mat-card-subtitle>
+    </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Метки</mat-card-title>
+    <br>
+      <form [formGroup]="tagForm" novalidate (ngSubmit)="submitAddNewTag()" (keydown.enter)="$event.preventDefault()">
+          <mat-form-field>
+              <input matInput placeholder="Создать новую метку" name="titleTag" formControlName="titleTag" (keyup)="checkUniqueValueTag('titleTag')">
+          </mat-form-field>
+          <div class="alert alert-danger" *ngIf="!isUniqueTag && !!tagForm.controls['titleTag'].hasError('unique')">
+              {{tagForm.controls['titleTag'].errors.unique}}
+          </div>
+          <button *ngIf="blockSubmitTag && isUniqueTag && !!tagForm.controls['titleTag'].value.trim()" type="submit" mat-raised-button color="primary" [disabled]="tagForm.invalid || blockSubmit">Добавить</button>
+      </form>
+
+      <div class="form-group" style="display: flex;justify-content: space-around;">
+        <form (ngSubmit)="submit1()" style="width: 100%;">
+
+          <div class="row">
+
+            <div *ngFor="let userType of userTypes; let i = index" class="tags__fix__main col-xs-12 col-md-4">
+
+                <div class="tags__fix__main__1">
+
+                  <mat-checkbox  [checked]="userType.checked" (change)="valueChange(i, $event)" name="{{userType.id}}">{{userType.title}}</mat-checkbox>
+                  <i class="material-icons" (click)="deleteTag(i, userType.id)" style="cursor: pointer">delete_forever</i>
+
+                </div>
+
+            </div>
+
+          </div>
+
+
+          <button class="save__1">Сохранить</button>
+        </form>
+      </div>
+  </mat-card-content>
+</mat-card>
+
+
+
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Заказы</mat-card-title>
+
+    <mat-tab-group>
+
+      <mat-tab label="Заказы пользователя">
+        <span class="small"> всего заказов : {{ ordersCount }} </span>
+        <span class="small"> общая сумма : {{ ordersTotalSum }} </span>
+
+
+        <table style="width:100%;">
+          <tr>
+            <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Заказ</th>
+            <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Общая сумма</th>
+            <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Клиент в заказе</th>
+            <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Информация</th>
+            <th style="text-align: center;padding-top: 10px;padding-bottom: 10px;">Статус</th>
+          </tr>
+          <tr *ngFor="let order of orders" style="border-bottom: 1px solid">
+            <td style="width: 230px; text-align: center;padding-top: 20px; padding-bottom: 10px">
+              <img src="{{ order.products[0].product.firstSmallImage }}" class="image__product">
+              <a [routerLink]="['/orders/update/', order.id]">Номер заказа {{ order.id }}</a>
+              <div>{{ order.created_at | date : 'HH:mm, dd:MM:yyyy'}}</div>
+
+              <label class="btn" for="{{ order.id }}">
+
+                В заказе {{order.products.length}} {{endOfSentence(order.products.length,['товар','товара','товаров'])}}
+
+              </label>
+
+              <input class="modal-state" id="{{ order.id }}" type="checkbox" />
+              <div class="modal">
+                <label class="modal__bg" for="{{ order.id }}"></label>
+                <div class="modal__inner">
+                  <label class="modal__close" for="{{ order.id }}"></label>
+
+                  <div *ngFor="let product of order.products" style="display: flex;justify-content: space-between;">
+                    <span><a style="color: #000;font-weight: bold;" [routerLink]="['/products/update/', product.product.slug]">{{ product.product.title }}</a></span>
+                    <span style="color: #000;font-weight: bold;">  {{ product.quantity }} шт11.</span>
+                  </div>
+
+                </div>
+              </div>
+
+            </td>
+            <td>
+              <div class="price__user">{{ order.amount}} грн. | {{ order.product_count}} шт.</div>
+            </td>
+            <td style="width:220px;">
+              <div class="" style="display: flex;flex-direction: column;text-align: center;">
+                <span>{{user.first_name}} {{user.last_name}}</span>
+                <span style="font-size: 14px;">{{ user.email}}</span>
+              </div>
+
+            </td>
+            <td>
+              <div class="" style="display: flex;flex-direction: column;text-align: left;">
+                <span style="font-size: 14px;"><span class="small">Доставка:</span> {{ order.delivery.delivery_type.title }}</span>
+                <span style="font-size: 14px;"><span class="small">Адрес:</span> {{ order.delivery.address.address }}</span>
+                <span style="font-size: 14px;"><span class="small">Оплата:</span> {{ order.payment.payment.title }}</span>
+              </div>
+
+            </td>
+            <td style="text-align: center;">
+              <span style="font-size: 14px;text-align: center">{{ order.history.status.title }}</span>
+            </td>
+          </tr>
+        </table>
+
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+
+
+

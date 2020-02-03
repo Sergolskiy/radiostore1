@@ -1,0 +1,152 @@
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Редактировать атрибут</mat-card-title>
+    <form [formGroup]="attributeForm" novalidate (ngSubmit)="submit()">
+
+      <mat-form-field>
+        <mat-select placeholder="Тип" name="attribute_type_id"  formControlName="attribute_type_id" required="required">
+          <mat-option *ngFor="let type of types" [value]="type.id">{{type.type}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput placeholder="Название"  name="title" formControlName="title" required="required">
+        <div class="alert alert-danger"
+             *ngIf="attributeForm.controls['title'].invalid && attributeForm.controls['title'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput type="number" placeholder="Сортировка"  name="sort_id" formControlName="sort_id">
+        <div class="alert alert-danger"
+             *ngIf="attributeForm.controls['sort_id'].invalid && attributeForm.controls['sort_id'].touched">
+          Некорректные данные
+        </div>
+      </mat-form-field>
+
+      <mat-checkbox name="is_filter" formControlName="is_filter">Фильтр</mat-checkbox>
+      <br>
+      <br>
+      <button type="submit" mat-raised-button color="primary" [disabled]="attributeForm.invalid || blockSubmit">Обновить</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Категории</mat-card-title>
+
+    <form class="add_category_form" [formGroup]="addCategoryForm" novalidate (ngSubmit)="addCategory()">
+      <h5>Добавить категорию</h5>
+      <mat-form-field>
+        <input type="text" placeholder="Введите название категории" required autoActiveFirstOption matInput (input)="addCategories($event)" name="category_id" formControlName="category_id" [matAutocomplete]="auto">
+      </mat-form-field>
+
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let option of options" [value]="option.title">{{option.title}}</mat-option>
+      </mat-autocomplete>
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="addCategoryForm.invalid">Добавить</button>
+    </form>
+    <br>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 mt-2">
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Название </th>
+        <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Действие </th>
+        <td mat-cell *matCellDef="let element"> <button mat-button color="primary" type="button" (click)="remove(element.id)">
+          Удалить
+        </button> </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedCategoryColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedCategoryColumns;"></tr>
+    </table>
+
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Добавить значение</mat-card-title>
+    <form [formGroup]="attributeValueForm" novalidate (ngSubmit)="createValue()">
+
+      <mat-form-field>
+        <input matInput placeholder="Название"  name="value" formControlName="value" required="required">
+        <div class="alert alert-danger"
+             *ngIf="attributeValueForm.controls['value'].invalid && attributeValueForm.controls['value'].touched">
+          Некорректное название
+        </div>
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary" [disabled]="attributeValueForm.invalid || blockSubmitValue">Добавить</button>
+    </form>
+
+  </mat-card-content>
+</mat-card>
+
+
+<mat-card>
+  <mat-card-content>
+    <mat-card-title>Значения</mat-card-title>
+    <mat-table [dataSource]="attributeValues">
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef>ID</mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="value">
+        <mat-header-cell *cdkHeaderCellDef>Название</mat-header-cell>
+            <mat-cell *cdkCellDef="let item">
+              <form #valueForm="ngForm" (change)="updateValue(valueForm)">
+              <mat-form-field>
+                <input matInput name="value" [value]="item.value" [ngModel]="item.value">
+              </mat-form-field>
+                <input type="hidden" name="attribute_value_id" [value]="item.id" [ngModel]="item.id">
+              </form>
+            </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="sort_id">
+        <mat-header-cell *cdkHeaderCellDef>Сортировка</mat-header-cell>
+        <mat-cell *cdkCellDef="let item">
+          <form #valueForm="ngForm" (change)="updateValue(valueForm)">
+            <mat-form-field>
+              <input matInput name="sort_id" [value]="item.sort_id" [ngModel]="item.sort_id">
+            </mat-form-field>
+            <input type="hidden" name="attribute_value_id" [value]="item.id" [ngModel]="item.id">
+          </form>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let item" style="display: flex; flex-direction: column;">
+          <button mat-button color="warn" (click)="deleteValue(item.id)">
+            Удалить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let product; columns: displayedColumns"></mat-row>
+    </mat-table>
+  </mat-card-content>
+</mat-card>

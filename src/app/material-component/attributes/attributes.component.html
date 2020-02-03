@@ -1,0 +1,62 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Атрибуты и Характеристики</mat-card-title>
+    <button mat-raised-button color="link" (click)="toCreate()">Создать</button>
+    <form #searchForm="ngForm" (ngSubmit)="search(searchForm)" style="display: inline-flex;
+    align-items: center;
+    float: right;">
+
+      <mat-form-field style="margin-right: 1rem;">
+        <input matInput type="text" placeholder="Поиск"  name="searcher"  [(ngModel)]="searcher">
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary">Искать</button>
+    </form>
+
+    <mat-table [dataSource]="attributes">
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('id')" > ID <i *ngIf="sort.id" class="fas fa-angle-up" ></i><i *ngIf="!sort.id" class="fas fa-angle-down"></i></mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="attribute_type_id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('attribute_type_id')"> Тип <i *ngIf="sort.attribute_type_id" class="fas fa-angle-up" ></i><i *ngIf="!sort.attribute_type_id" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.attribute_type.type}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="title">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('title')"> Название <i *ngIf="sort.title" class="fas fa-angle-up" ></i><i *ngIf="!sort.title" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.title}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="sort_id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('sort_id')"> Сортировка <i *ngIf="sort.sort_id" class="fas fa-angle-up" ></i><i *ngIf="!sort.sort_id" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let item"> {{item.sort_id}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let item" style="display: flex; flex-direction: column;">
+          <button mat-button color="primary" (click)="toUpdate(item.id)">
+            Редактировать
+          </button>
+          <button mat-button color="warn" (click)="deleteAttribute(item.id)">
+            Удалить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let item; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>

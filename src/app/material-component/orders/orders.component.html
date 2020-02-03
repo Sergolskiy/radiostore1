@@ -1,0 +1,227 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Заказы</mat-card-title>
+
+
+    <!--filter menu-->
+    <button mat-raised-button [matMenuTriggerFor]="menu">Отфильтруйте заказы</button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="status">По статусу заказа</button>
+
+    </mat-menu>
+    <mat-menu #status="matMenu">
+      <button mat-menu-item *ngFor="let status of orderStatuses" (click)="setFilter(status)">{{status.title}}</button>
+    </mat-menu>
+    <!--end filter menu-->
+
+    <!--current filter-->
+  <!--  <div *ngFor="let param of currentlyFilters; let i = index" style="margin: 0 0 5px 5px;">
+      <span>{{ param.title }}: {{ param.name }}</span><i class="material-icons" style="cursor: pointer" (click)="deleteFilterUserList(param, i)">close</i>
+      <span></span>
+    </div> -->
+
+
+    <div class="tags__main row">
+
+      <div class="col-xs-12 col-md-4" *ngFor="let param of currentlyFilters; let i = index">
+
+        <div  class="tags__main__1">
+          <span>{{ param.title }}: {{ param.name }}</span><i class="material-icons" (click)="deleteFilterUserList(param, i)">close</i>
+          <span></span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!--end current filter-->
+
+    <!--filter menu-->
+    <button mat-raised-button [matMenuTriggerFor]="multiple">Действие для заказов</button>
+
+    <mat-menu #multiple="matMenu">
+      <button mat-menu-item [matMenuTriggerFor]="multipleStatus">Изменить статус</button>
+      <button mat-menu-item (click)="openDialogForMultipleMessage()">Рассылка</button>
+    </mat-menu>
+
+    <mat-menu #multipleStatus="matMenu">
+      <button mat-menu-item *ngFor="let status of orderStatuses" (click)="sendMultiMessage1(status)">{{status.title}}</button>
+    </mat-menu>
+    <!--end filter menu-->
+
+    <form #searchForm="ngForm" (ngSubmit)="search(searchForm)" style="display: inline-flex;
+    align-items: center;
+    float: right;">
+
+      <mat-form-field style="margin-right: 1rem;">
+        <input matInput type="text" placeholder="Поиск"  name="searcher"  [(ngModel)]="searcher">
+      </mat-form-field>
+
+      <button type="submit" mat-raised-button color="primary">Искать</button>
+    </form>
+
+    <mat-table [dataSource]="orders" style="margin-top: 2rem;">
+
+      <ng-container cdkColumnDef="action1">
+        <mat-header-cell *cdkHeaderCellDef style="display: flex; justify-content: center;padding-left: 0">
+          <input type="checkbox" (click)="selectAll($event)" />
+        </mat-header-cell>
+        <mat-cell *cdkCellDef="let order" style="display: flex; justify-content: center;padding-left: 0">
+          <input type="checkbox" name="client_{{order.id}}" />
+        </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef> Заказ </mat-header-cell>
+        <mat-cell *cdkCellDef="let order" style="display:flex;flex-direction:column;">
+          <img *ngIf="order.products.length" src="{{ order.products[0].product.firstSmallImage }}" class="image__product">
+
+          <a [routerLink]="['/orders/update/', order.id]">Номер заказа {{ order.id }}</a>
+          <div>{{ order.created_at | date : 'HH:mm, dd:MM:yyyy'}}</div>
+
+
+          <label class="btn" for="{{ order.id }}">
+
+            В заказе {{order.products.length}} {{endOfSentence(order.products.length,['товар','товара','товаров'])}}
+
+          </label>
+
+          <input class="modal-state" id="{{ order.id }}" type="checkbox" />
+          <div class="modal">
+            <label class="modal__bg" for="{{ order.id }}"></label>
+            <div class="modal__inner">
+              <label class="modal__close" for="{{ order.id }}"></label>
+
+
+              <div *ngFor="let product of order.products" style="display: flex;justify-content: space-between;">
+                <span><a style="color: #000;font-weight: bold;" [routerLink]="['/products/update/', product.product.slug]">{{ product.product.title }}</a></span>
+                <span style="color: #000;font-weight: bold;">  {{ product.quantity }} шт.</span>
+              </div>
+
+
+
+            </div>
+          </div>
+
+
+
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="commonAmount">
+        <mat-header-cell *cdkHeaderCellDef> Общая сумма </mat-header-cell>
+        <mat-cell *cdkCellDef="let order">
+
+            <div class="" style="display: flex;flex-direction: column;width: 100%;align-items: center;">
+
+            <div class="">
+              {{ order.amount}} грн.
+            </div>
+
+              <div class="">
+                {{ order.product_count}} шт.
+              </div>
+
+            </div>
+
+        </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="client">
+        <mat-header-cell *cdkHeaderCellDef> Клиент </mat-header-cell>
+        <mat-cell *cdkCellDef="let order">
+          <div class="" style="display: flex;flex-direction: column;text-align: center;">
+            <span *ngIf="order.first_name.length && order.last_name.length; else OrderByOneClick">{{order.first_name}} {{order.last_name}}</span>
+
+            <ng-template #OrderByOneClick>
+              <span>Заказ в один клик</span>
+            </ng-template>
+
+            <span style="font-size: 14px;">{{ order.phone}}</span>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="information">
+        <mat-header-cell *cdkHeaderCellDef> Информация </mat-header-cell>
+        <mat-cell *cdkCellDef="let order">
+          <div class="" style="display: flex;flex-direction: column;text-align: center;">
+            <span style="font-size: 14px;">{{ order.delivery.delivery_type.title }}</span>
+            <span style="font-size: 14px;">{{ order.payment.payment.title }}</span>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="status">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('status')"> Статус заказа  </mat-header-cell>
+        <mat-cell *cdkCellDef="let order">
+          <mat-form-field  style="display: flex;width: 100%!important;padding-left: 20px;padding-right: 20px;">
+            <mat-select [(value)]="order.history.status.id">
+              <mat-option *ngFor="let orderStatus of orderStatuses" [value]="orderStatus.id" (click)="updateOrderStatus(orderStatus.id, order.id)">{{orderStatus.title}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="created_at">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('created_at')"> Дата заказа  </mat-header-cell>
+        <mat-cell *cdkCellDef="let user"> {{user.created_at | date:"HH:mm dd.MM.yyyy"}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef></mat-header-cell>
+        <mat-cell *cdkCellDef="let user" style="display: flex; flex-direction: column;">
+          <button mat-button color="primary" (click)="toUpdate(user.id)">
+            Редактировать
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+
+
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns">
+
+
+
+      </mat-header-row>
+      <mat-row *cdkRowDef="let user; columns: displayedColumns">
+
+
+
+
+      </mat-row>
+
+
+
+      <input class="tree-toggle" type="checkbox" id="{{order.id}}" />
+      <label class="tree-toggle-label" for="{{order.id}}" style="display: none">Заказ</label>
+      <ul class="subtree">
+
+
+
+        <li style="width: 100%;">
+
+          <div *ngFor="let product of order.products" style="display: flex;justify-content: space-between;">
+            <span><a style="color: #000;font-weight: bold;" [routerLink]="['/products/update/', product.product.slug]">{{ product.product.title }}</a></span>
+            <span style="color: #000;font-weight: bold;">  {{ product.quantity }} шт.</span>
+          </div>
+
+        </li>
+      </ul>
+
+
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>

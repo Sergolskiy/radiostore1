@@ -1,0 +1,42 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Настройки</mat-card-title>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Кеш </mat-panel-title>
+      </mat-expansion-panel-header>
+        <button mat-raised-button color="link" (click)="cacheClear()">Очистить кеш</button>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Экспорт в Excel </mat-panel-title>
+      </mat-expansion-panel-header>
+      <a href="{{product_excel_link}}"><button mat-raised-button color="link" (click)="getProductsExcel()">Товары</button></a>
+      <br>
+      <br>
+      <a href="{{attribute_excel_link}}"><button mat-raised-button color="link" (click)="getAttributeExcel()">Атрибуты и Характеристики</button></a>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Импорт атрибутов товара </mat-panel-title>
+      </mat-expansion-panel-header>
+      <input type="file" placeholder="Файл" accept=".xlsx" (change)="setAttributeFile($event)">
+      <br><br>
+      <button type="button" mat-raised-button color="primary" (click)="uploadAttributeFile()">Загрузить файл</button>
+
+    </mat-expansion-panel>
+
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Prom.ua </mat-panel-title>
+      </mat-expansion-panel-header>
+      <span *ngIf="processing" style="color: orange;">Файл в обработке...</span>
+      <input *ngIf="!processing" type="file" placeholder="Файл" accept=".xlsx" (change)="setPromFile($event)">
+      <br><br>
+      <button *ngIf="!processing" type="button" mat-raised-button color="primary" (click)="uploadPromFile()">Загрузить файл</button>
+
+    </mat-expansion-panel>
+  </mat-card-content>
+</mat-card>

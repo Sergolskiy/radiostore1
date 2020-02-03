@@ -1,0 +1,75 @@
+<mat-card>
+  <mat-card-content>    
+  <mat-card-title>Комментарии</mat-card-title>
+    <!--<button mat-raised-button color="link" (click)="toCreate()">Создать</button>-->
+    <mat-table [dataSource]="comments">
+      <!-- User name Definition -->
+      <ng-container cdkColumnDef="id">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('id')" style="flex: 0.5;" > ID <i *ngIf="sort.id" class="fas fa-angle-up" ></i><i *ngIf="!sort.id" class="fas fa-angle-down"></i></mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="flex: 0.5;"> {{comment.id}} </mat-cell>
+      </ng-container>
+
+      <!-- Title Definition -->
+      <ng-container cdkColumnDef="product_link">
+        <mat-header-cell *cdkHeaderCellDef> Ссылка на продукт </mat-header-cell>
+        <mat-cell *cdkCellDef="let comment"> <a [href]="comment.product_link" target="_blank">{{comment.product.title}}</a></mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="comment">
+        <mat-header-cell *cdkHeaderCellDef style="flex: 1.2;"> Текст </mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="flex: 1.2;"> {{comment.comment}} </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="ownerComment">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('ownerComment')" style="flex: 0.6;"> Имя пользователя <i *ngIf="sort.ownerComment" class="fas fa-angle-up" ></i><i *ngIf="!sort.owner_comment" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="flex: 0.6;"> {{comment.ownerComment}} </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="is_active">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('is_active')" style="flex: 0.5;"> Статус <i *ngIf="sort.is_active" class="fas fa-angle-up" ></i><i *ngIf="!sort.is_active" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="flex: 0.7;">
+          <mat-form-field>
+            <mat-select placeholder="Активность" [value]="comment.is_active">
+              <mat-option [value]="1" (click)="updateStatus({id: comment.id, is_active: 1})">Активен</mat-option>
+              <mat-option [value]="0" (click)="updateStatus({id: comment.id, is_active: 0})">Не активен</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Age Definition -->
+      <ng-container cdkColumnDef="rating">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('rating')" style="flex: 0.5;"> Оценка <i *ngIf="sort.rating" class="fas fa-angle-up" ></i><i *ngIf="!sort.rating" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="flex: 0.5;"> {{comment.rating}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="created_at">
+        <mat-header-cell *cdkHeaderCellDef (click)="sortByValue('created_at')" style="flex: 0.5;"> Дата создания <i *ngIf="sort.created_at" class="fas fa-angle-up" ></i><i *ngIf="!sort.created_at" class="fas fa-angle-down"></i> </mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="flex: 0.5;"> {{comment.created_at | date:"dd.MM.yyyy"}} </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="action">
+        <mat-header-cell *cdkHeaderCellDef style="flex: 0.5;"></mat-header-cell>
+        <mat-cell *cdkCellDef="let comment" style="display: flex; flex-direction: column; flex: 0.5;" >
+          <!--<button mat-button color="primary" (click)="toUpdate(comment.id)">-->
+            <!--Редактировать-->
+          <!--</button>-->
+          <button mat-button color="warn" (click)="deleteComment(comment.id)">
+            Удалить
+          </button>
+        </mat-cell>
+      </ng-container>
+
+
+      <!-- Header and Row Declarations -->
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let user; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-paginator [(length)]="item_length" [(pageIndex)]="current_page" [(pageSize)]="item_count" [(pageSizeOptions)]="pageSizeOptions" (page)="pageEvent = pagination($event)"></mat-paginator>
+    <!--<mat-paginator [pageSizeOptions]="[2,4,20]" showFirstLastButtons></mat-paginator>-->
+  </mat-card-content>
+</mat-card>
